@@ -1,0 +1,93 @@
+create table CLIENTI(
+	      Nome                     varchar(26) not null,
+	      Cognome                  varchar(26) not null,
+	      Email                    varchar(40) not null,
+	      Sesso                    varchar(26),
+	      Nazionalita              varchar(80) not null,
+	      DatadiNascita            date        not null,  
+	     
+          constraint D3 primary key(Email),
+	      constraint D4 check(Nazionalita IN('AFGHANISTAN','ALBANIA','ALGERIA','ANDORRA','ANGOLA','ANTIGUA E BARBUDA','ARABIA SAUDITA','ARGENTINA','ARMENIA','AUSTRALIA','AUSTRIA','AZERBAIGIAN','BAHAMAS','BAHREIN','BANGLADESH','BARBADOS','BELGIO','BELIZE','BENIN','BHUTAN','BIELORUSSIA','BIRMANIA','BOLIVIA','BOSNIA ED ERZEGOVINA','BOTSWANA','BRASILE','BRUNEI','BULGARIA','BURKINA FASO','BURUNDI','CAMBOGIA','CAMERUN','CANADA','CAPO VERDE','CIAD','CILE','CINA','CIPRO','COLOMBIA','COMORE','CONGO','COREA DEL NORD','COREA DEL SUD','COSTA RICA','CROAZIA','CUBA','DANIMARCA','DOMINICA','ECUADOR','EGITTO','EL SALVADOR','EMIRATI ARABI UNITI','ERITREA','ESTONIA','ESWATINI','ETIOPIA','FIGI','FILIPPINE','FINLANDIA','FRANCIA','GABON','GAMBIA','GEORGIA','GERMANIA','GHANA','GIAMAICA','GIAPPONE','GIBUTI','GIORDANIA','GRECIA','GRENADA','GUATEMALA','GUINEA','GUINEA EQUATORIALE','GUINEA-BISSAU','GUYANA','HAITI','HONDURAS','INDIA','INDONESIA','IRAN','IRAQ','IRLANDA','ISLANDA','ISOLE MARSHALL','ISOLE SALOMONE','ISRAELE','ITALIA','KAZAKISTAN','KENYA','KIRGHIZISTAN','KIRIBATI','KOSOVO','KUWAIT','LAOS','LESOTHO','LETTONIA','LIBANO','LIBERIA','LIBIA','LIECHTENSTEIN','LITUANIA','LUSSEMBURGO','MACEDONIA DEL NORD','MADAGASCAR','MALAWI','MALDIVE','MALESIA','MALI','MALTA','MAROCCO','MAURITANIA','MAURITIUS','MESSICO','MICRONESIA','MOLDAVIA','MONACO','MONGOLIA','MONTENEGRO','MOZAMBICO','NAMIBIA','NAURU','NEPAL','NICARAGUA','NIGER','NIGERIA','NORVEGIA','NUOVA ZELANDA','OMAN','PAESI BASSI','PAKISTAN','PALAU','PALESTINA','PANAMA','PAPUA NUOVA GUINEA','PARAGUAY','PERU','POLONIA','PORTOGALLO','QATAR','REGNO UNITO','REPUBBLICA CECA','REPUBBLICA CENTRNA','REPUBBLICA DEMOCRATICA DEL CONGO','REPUBBLICA DOMINICANA','ROMANIA','RUANDA','RUSSIA','SAINT KITTS E NEVIS','SAINT VINCENT E GRENADINE','SAMOA','SAN MARINO','SANTA LUCIA','SENEGAL','SERBIA','SEYCHELLES','SIERRA LEONE','SINGAPORE','SIRIA','SLOVACCHIA','SLOVENIA','SOMALIA','SPAGNA','SRI LANKA','STATI UNITI','SUD','SUDAN','SUDAN DEL SUD','SURINAME','SVEZIA','SVIZZERA','TAGIKISTAN','TAIWAN','TANZANIA','THAILANDIA','TIMOR EST','TOGO','TONGA','TRINIDAD E TOBAGO','TUNISIA','TURCHIA','TURKMENISTAN','TUVALU','UCRAINA','UGANDA','UNGHERIA','URUGUAY','UZBEKISTAN','VANUATU','VATICANO','VENEZUELA','VIETNAM','YEMEN','ZAMBIA','ZIMBABWE'
+	      )),
+	      constraint D5 check(DatadiNascita > TO_DATE('1-1-1900','DD-MM-YYYY')),
+	      constraint D6 check(Sesso IN('UOMO','DONNA','ALTRO'))
+	      
+);
+create table PRODUZIONI(
+
+    Codiceproduzione integer,
+    Nome varchar(40) not null,
+    Genere varchar(26) not null,
+    Dataproduzione integer not null,
+    Tipo varchar(26) not null,
+    Durata integer,
+    Stagioni integer,
+    Puntate integer,
+    
+    constraint D15 primary key(Codiceproduzione),
+    constraint D17 check(Genere IN('THRILLER','NOIR','STORICO','COMMEDIA','GIALLO','HORROR','FANTASCIENZA')),
+    constraint D18 check(Dataproduzione > 1800),
+    constraint D19 check(Tipo IN('FILM','SERIE')),
+    constraint D20 check(((TIPO = 'FILM') and (Durata IS NOT NULL) and (Durata > 60) and (Stagioni IS NULL) and (Puntate is NULL))     or ((TIPO = 'SERIE') and (Durata IS NULL) and (Stagioni IS NOT NULL) and (Puntate is NOT NULL)))
+);      
+create table  PIATTAFORME(
+	      Nome           varchar(26),
+	      constraint D7 primary key (nome));
+
+create table MEMBRIDELCAST(
+	      CodicemembroDelcast	int	    not null,
+	      Nome			varchar(26) not null,
+	      Cognome			varchar(26) not null,
+	      Sesso			varchar(26),
+	      Nazionalita               varchar(80) not null,
+	      DatadiNascita             date,
+	      Tipo			varchar(26) not null,
+
+	
+	      constraint D8 primary key(CodicemembroDelcast),
+              constraint D11 check(Nazionalita IN('AFGHANISTAN','ALBANIA','ALGERIA','ANDORRA','ANGOLA','ANTIGUA E BARBUDA','ARABIA SAUDITA','ARGENTINA','ARMENIA','AUSTRALIA','AUSTRIA','AZERBAIGIAN','BAHAMAS','BAHREIN','BANGLADESH','BARBADOS','BELGIO','BELIZE','BENIN','BHUTAN','BIELORUSSIA','BIRMANIA','BOLIVIA','BOSNIA ED ERZEGOVINA','BOTSWANA','BRASILE','BRUNEI','BULGARIA','BURKINA FASO','BURUNDI','CAMBOGIA','CAMERUN','CANADA','CAPO VERDE','CIAD','CILE','CINA','CIPRO','COLOMBIA','COMORE','CONGO','COREA DEL NORD','COREA DEL SUD','COSTA RICA','CROAZIA','CUBA','DANIMARCA','DOMINICA','ECUADOR','EGITTO','EL SALVADOR','EMIRATI ARABI UNITI','ERITREA','ESTONIA','ESWATINI','ETIOPIA','FIGI','FILIPPINE','FINLANDIA','FRANCIA','GABON','GAMBIA','GEORGIA','GERMANIA','GHANA','GIAMAICA','GIAPPONE','GIBUTI','GIORDANIA','GRECIA','GRENADA','GUATEMALA','GUINEA','GUINEA EQUATORIALE','GUINEA-BISSAU','GUYANA','HAITI','HONDURAS','INDIA','INDONESIA','IRAN','IRAQ','IRLANDA','ISLANDA','ISOLE MARSHALL','ISOLE SALOMONE','ISRAELE','ITALIA','KAZAKISTAN','KENYA','KIRGHIZISTAN','KIRIBATI','KOSOVO','KUWAIT','LAOS','LESOTHO','LETTONIA','LIBANO','LIBERIA','LIBIA','LIECHTENSTEIN','LITUANIA','LUSSEMBURGO','MACEDONIA DEL NORD','MADAGASCAR','MALAWI','MALDIVE','MALESIA','MALI','MALTA','MAROCCO','MAURITANIA','MAURITIUS','MESSICO','MICRONESIA','MOLDAVIA','MONACO','MONGOLIA','MONTENEGRO','MOZAMBICO','NAMIBIA','NAURU','NEPAL','NICARAGUA','NIGER','NIGERIA','NORVEGIA','NUOVA ZELANDA','OMAN','PAESI BASSI','PAKISTAN','PALAU','PALESTINA','PANAMA','PAPUA NUOVA GUINEA','PARAGUAY','PERU','POLONIA','PORTOGALLO','QATAR','REGNO UNITO','REPUBBLICA CECA','REPUBBLICA CENTRNA','REPUBBLICA DEMOCRATICA DEL CONGO','REPUBBLICA DOMINICANA','ROMANIA','RUANDA','RUSSIA','SAINT KITTS E NEVIS','SAINT VINCENT E GRENADINE','SAMOA','SAN MARINO','SANTA LUCIA','SENEGAL','SERBIA','SEYCHELLES','SIERRA LEONE','SINGAPORE','SIRIA','SLOVACCHIA','SLOVENIA','SOMALIA','SPAGNA','SRI LANKA','STATI UNITI','SUD','SUDAN','SUDAN DEL SUD','SURINAME','SVEZIA','SVIZZERA','TAGIKISTAN','TAIWAN','TANZANIA','THAILANDIA','TIMOR EST','TOGO','TONGA','TRINIDAD E TOBAGO','TUNISIA','TURCHIA','TURKMENISTAN','TUVALU','UCRAINA','UGANDA','UNGHERIA','URUGUAY','UZBEKISTAN','VANUATU','VATICANO','VENEZUELA','VIETNAM','YEMEN','ZAMBIA','ZIMBABWE'
+	      )),
+
+              constraint D12 check(Sesso IN('UOMO','DONNA','ALTRO')),
+	      constraint D13 check(DatadiNascita > TO_DATE('1-1-1900','DD-MM-YYYY')),
+	      constraint D14 check(Tipo IN('REGISTA','ATTORE'))
+);
+create table  ISCRIZIONI(
+			EmailCliente varchar(40),
+			NomePiattaforma varchar(26),
+			Username varchar(26) not null,
+		
+		constraint D25 primary key(Username)
+	     
+);
+create table  VISUALIZZAZIONI(
+	      IdProduzione   integer,
+	      EmailCliente   varchar(40),
+	      Valutazione    integer,
+	      Completato     char(2),
+
+              constraint D28 check(Valutazione between 1 and 5),
+	      constraint D29 check(Completato in('SI','NO'))
+);
+create table PREFERENZE(
+	IdMembroDelCast integer,
+	EmailCliente varchar(40)
+);
+create table  PARTECIPAZIONI(
+	IdMembroDelCast integer,
+	IdProduzione integer
+);
+create table PRESENTAZIONI(
+	NomePiattaforma varchar(26),
+	IdProduzione integer
+);
+--Aggiunta dei vincoli di integrità referenziale
+
+alter table ISCRIZIONI add constraint fk_CLIENTI_ISCRIZIONI foreign key(EmailCliente) references CLIENTI(Email) on delete set null;
+alter table ISCRIZIONI add constraint fk_PIATTAFORME_ISCRIZIONI foreign key(NomePiattaforma) references PIATTAFORME(Nome) on delete set null;
+alter table VISUALIZZAZIONI add constraint fk_PRODUZIONI_VISUALIZZAZIONI foreign key(IdProduzione) references PRODUZIONI(Codiceproduzione) on delete set null;
+alter table VISUALIZZAZIONI add constraint fk_CLIENTI_VISUALIZZAZIONI foreign key(EmailCliente) references CLIENTI(Email) on delete set null;
+alter table PREFERENZE add constraint fk_MEMBRIDELCAST_PREFERENZE foreign key(IdMembroDelCast) references MEMBRIDELCAST(CodicemembroDelcast) on delete set null;
+alter table PREFERENZE add constraint fk_CLIENTI_PREFERENZE foreign key(EmailCliente) references CLIENTI(Email) on delete set null;
+alter table PARTECIPAZIONI add constraint fk_MEMBRIDELCAST_PARTECIPAZIONI foreign key(IdMembroDelCast) references MEMBRIDELCAST(CodicemembroDelcast) on delete set null;
+alter table PARTECIPAZIONI add constraint fk_PRODUZIONI_PARTECIPAZIONI foreign key(IdProduzione) references PRODUZIONI(Codiceproduzione) on delete set null;

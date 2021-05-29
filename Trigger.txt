@@ -1,0 +1,226 @@
+CREATE OR REPLACE TRIGGER CA1_Insert 
+before insert ON PREFERENZE 
+for each row 
+DECLARE 
+OverflowFavoriteAttore EXCEPTION; 
+numeroAttori number(10); 
+stato varchar(26);
+cursor listaAttori IS
+SELECT *
+FROM PREFERENZE JOIN MEMBRIDELCAST ON (IdMembroDelCast = CodicemembroDelcast) 
+WHERE Tipo = 'ATTORE' ;
+riga listaAttori%ROWTYPE;
+
+BEGIN 
+OPEN listaAttori;
+
+select Tipo INTO stato
+from MEMBRIDELCAST
+where :new.IdMembroDelCast = MEMBRIDELCAST.CodicemembroDelcast; 
+loop
+FETCH listaAttori INTO riga;
+
+if((riga.emailcliente = :new.emailcliente) and (stato = 'ATTORE'))
+THEN RAISE OverflowFavoriteAttore;  
+end if;
+exit when(listaAttori%NOTFOUND);
+end loop;
+
+EXCEPTION 
+WHEN OverflowFavoriteAttore  
+then raise_application_error(-20100,'errore CA1_Insert'); 
+end; 
+
+ 
+--2
+CREATE OR REPLACE TRIGGER CA1_Update 
+before update of EmailCliente ON PREFERENZE 
+for each row 
+DECLARE
+OverflowFavoriteAttore EXCEPTION; 
+numeroAttori number(10); 
+stato varchar(26);
+cursor listaAttori IS
+SELECT *
+FROM PREFERENZE JOIN MEMBRIDELCAST ON (IdMembroDelCast = CodicemembroDelcast) 
+WHERE Tipo = 'ATTORE' ;
+riga listaAttori%ROWTYPE;
+BEGIN
+OPEN listaAttori;
+loop
+FETCH listaAttori INTO riga;
+if(:new.EmailCliente = riga.EmailCliente)
+THEN RAISE OverflowFavoriteAttore;
+END IF;
+exit when(listaAttori%NOTFOUND);
+end loop;
+EXCEPTION 
+WHEN OverflowFavoriteAttore  
+then raise_application_error(-20300,'errore CA1_Update'); 
+end; 
+ 
+--3 
+CREATE OR REPLACE TRIGGER CA2_Insert 
+before insert ON PREFERENZE 
+for each row 
+DECLARE 
+OverflowFavoriteRegista EXCEPTION; 
+numeroAttori number(10); 
+stato varchar(26);
+cursor listaAttori IS
+SELECT *
+FROM PREFERENZE JOIN MEMBRIDELCAST ON (IdMembroDelCast = CodicemembroDelcast) 
+WHERE Tipo = 'REGISTA' ;
+riga listaAttori%ROWTYPE;
+
+BEGIN 
+OPEN listaAttori;
+
+select Tipo INTO stato
+from MEMBRIDELCAST
+where :new.IdMembroDelCast = MEMBRIDELCAST.CodicemembroDelcast; 
+loop
+FETCH listaAttori INTO riga;
+
+if((riga.emailcliente = :new.emailcliente) and (stato = 'REGISTA'))
+THEN RAISE OverflowFavoriteRegista;  
+end if;
+exit when(listaAttori%NOTFOUND);
+end loop;
+
+EXCEPTION 
+WHEN OverflowFavoriteRegista  
+then raise_application_error(-20100,'errore CA2_Insert'); 
+end; 
+   
+--4 
+CREATE OR REPLACE TRIGGER CA2_Update
+before update of EmailCliente ON PREFERENZE 
+for each row 
+DECLARE
+OverflowFavoriteRegista EXCEPTION; 
+numeroAttori number(10); 
+stato varchar(26);
+cursor listaAttori IS
+SELECT *
+FROM PREFERENZE JOIN MEMBRIDELCAST ON (IdMembroDelCast = CodicemembroDelcast) 
+WHERE Tipo = 'REGISTA' ;
+riga listaAttori%ROWTYPE;
+BEGIN
+OPEN listaAttori;
+loop
+FETCH listaAttori INTO riga;
+if(:new.EmailCliente = riga.EmailCliente)
+THEN RAISE OverflowFavoriteRegista;
+END IF;
+exit when(listaAttori%NOTFOUND);
+end loop;
+EXCEPTION 
+WHEN OverflowFavoriteRegista  
+then raise_application_error(-20300,'errore CA2_Update'); 
+end; 
+ 
+--5
+create or replace trigger CA3_Insert
+before insert on PARTECIPAZIONI
+for each row
+
+declare
+--eccezioni
+overflowProduzioni EXCEPTION;
+numeroProduzioni number(10);
+CURSOR listaRegisti IS
+SELECT IdProduzione AS Produzione,COUNT(IdMembroDelCast) AS Registi
+FROM MEMBRIDELCAST JOIN PARTECIPAZIONI ON(CodicemembroDelcast = IdMembroDelCast)
+WHERE Tipo = 'REGISTA'
+GROUP BY IdProduzione;
+
+riga listaRegisti%ROWTYPE;
+begin
+--contiamo le produzioni di un singolo regista
+OPEN listaRegisti;
+WHILE(not listaRegisti%NOTFOUND) LOOP
+FETCH listaRegisti INTO riga;
+if((:new.IdProduzione = riga.Produzione) and (riga.Registi >= 3))
+THEN raise overflowProduzioni;
+end if;
+
+END LOOP;
+CLOSE listaRegisti;
+
+EXCEPTION
+when overflowProduzioni
+then raise_application_error(-20400,'errore CA3_Insert');
+end;
+
+--6
+CREATE OR REPLACE TRIGGER CA3_Update
+before update OF IdProduzione on PARTECIPAZIONI
+for each row
+
+DECLARE
+--eccezioni
+overflowProduzioni EXCEPTION;
+numeroProduzioni number(10);
+CURSOR listaRegisti IS
+SELECT IdProduzione AS Produzione,COUNT(IdMembroDelCast) AS Registi
+FROM MEMBRIDELCAST JOIN PARTECIPAZIONI ON(CodicemembroDelcast = IdMembroDelCast)
+WHERE Tipo = 'REGISTA'
+GROUP BY IdProduzione;
+
+riga listaRegisti%ROWTYPE;
+begin
+--contiamo le produzioni di un singolo regista
+OPEN listaRegisti;
+WHILE(not listaRegisti%NOTFOUND) LOOP
+FETCH listaRegisti INTO riga;
+if((:new.IdProduzione = riga.Produzione) and (riga.Registi >= 3))
+THEN raise overflowProduzioni;
+end if;
+
+END LOOP;
+CLOSE listaRegisti;
+
+EXCEPTION
+when overflowProduzioni
+then raise_application_error(-20500,'errore CA3_Update');
+
+END;
+ 
+--7 Un uso utile del trigger è portare tutto in maiscuolo le insert 
+ 
+CREATE OR REPLACE TRIGGER CA4 
+before insert on CLIENTI 
+for each row 
+ 
+BEGIN 
+:new.Nazionalita := upper(:new.Nazionalita); 
+:new.Sesso := upper(:new.Sesso); 
+END; 
+ --8
+CREATE OR REPLACE TRIGGER CA5 
+before insert on MEMBRIDELCAST 
+for each row 
+ 
+BEGIN 
+:new.Nazionalita := upper(:new.Nazionalita); 
+:new.Sesso := upper(:new.Sesso); 
+:new.Tipo := upper(:new.Tipo); 
+END; 
+--9
+CREATE OR REPLACE TRIGGER CA6 
+before insert on PRODUZIONI 
+for each row 
+ 
+BEGIN 
+:new.Genere := upper(:new.Genere); 
+:new.Tipo := upper(:new.Tipo); 
+END; 
+ --10
+CREATE TRIGGER CA7 
+before insert on VISUALIZZAZIONI 
+for each row 
+ 
+BEGIN 
+:new.Completato := upper(:new.Completato); 
+END;
